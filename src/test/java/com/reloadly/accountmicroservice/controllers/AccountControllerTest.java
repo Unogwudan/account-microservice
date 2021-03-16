@@ -4,7 +4,6 @@ import com.reloadly.accountmicroservice.AccountMicroServiceApplication;
 import com.reloadly.accountmicroservice.constants.CommonConstants;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.helpers.TestHelper;
-import com.reloadly.accountmicroservice.repositories.AccountRepository;
 import com.reloadly.accountmicroservice.services.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -34,7 +33,7 @@ import static org.mockito.Mockito.doReturn;
 @AutoConfigureMockMvc
 @AutoConfigureWebTestClient
 @ActiveProfiles("test")
-@PropertySource("classpath:test.properties")
+@PropertySource("classpath:/test.properties")
 public class AccountControllerTest {
 
     @Autowired
@@ -42,9 +41,6 @@ public class AccountControllerTest {
 
     @MockBean
     private AccountService accountService;
-
-    @MockBean
-    private AccountRepository accountRepository;
 
     @Test
     public void createAccount() {

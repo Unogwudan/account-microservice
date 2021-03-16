@@ -30,11 +30,10 @@ public class AccountService {
      */
     public Mono<AccountMicroServiceResponse> createAccount(AccountDto accountDto) {
 
-        log.info("Inside Service {}", accountDto);
         AccountMicroServiceResponse response;
         Account account = accountRepository.findByEmail(accountDto.getEmail());
 
-        if (account != null) {
+        if (!Objects.isNull(account)) {
             return Mono.just(new AccountMicroServiceResponse(ALREADY_EXIST.getCanonicalCode(), ALREADY_EXIST.getDescription(), LocalDateTime.now().toString(), account));
         }
 
@@ -67,7 +66,7 @@ public class AccountService {
         AccountMicroServiceResponse response;
         Account account = accountRepository.findById(id);
 
-        if (!Objects.isNull(account)) {
+        if (Objects.isNull(account)) {
             return Mono.just(new AccountMicroServiceResponse(NOT_FOUND.getCanonicalCode(), NOT_FOUND.getDescription(), LocalDateTime.now().toString(), account));
         }
 

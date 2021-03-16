@@ -40,7 +40,6 @@ public class TestHelper {
                 .phoneNumber(faker.phoneNumber().phoneNumber())
                 .active(Boolean.TRUE)
                 .build();
-        account.setId(1l);
 
         return account;
     }
