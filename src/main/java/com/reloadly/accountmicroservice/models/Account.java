@@ -48,7 +48,12 @@ public class Account extends BaseModel<Account> {
     @Column(nullable = false)
     private Boolean active;
 
-//    @Column(nullable = false)
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
+
+    //    @Column(nullable = false)
 //    private Boolean deleted = Boolean.FALSE;
 
 //    @ApiModelProperty(hidden = true)

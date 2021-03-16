@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static com.reloadly.accountmicroservice.enums.ResponseCode.*;
 
@@ -29,6 +30,7 @@ public class AccountService {
      */
     public Mono<AccountMicroServiceResponse> createAccount(AccountDto accountDto) {
 
+        log.info("Inside Service {}", accountDto);
         AccountMicroServiceResponse response;
         Account account = accountRepository.findByEmail(accountDto.getEmail());
 
@@ -65,7 +67,7 @@ public class AccountService {
         AccountMicroServiceResponse response;
         Account account = accountRepository.findById(id);
 
-        if (account == null) {
+        if (!Objects.isNull(account)) {
             return Mono.just(new AccountMicroServiceResponse(NOT_FOUND.getCanonicalCode(), NOT_FOUND.getDescription(), LocalDateTime.now().toString(), account));
         }
 

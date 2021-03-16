@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -18,19 +17,15 @@ import javax.validation.Valid;
 @RequestMapping(CommonConstants.API_VERSION + "accounts")
 public class AccountController {
 
-    private final AccountService accountService;
+    private AccountService accountService;
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    @GetMapping
-    public Flux<String> getAccounts() {
-        return Flux.just("Account A, ", "Account B");
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountMicroServiceResponse>> createAccount(@Valid @RequestBody AccountDto accountDto) {
+        log.info("Request {}", accountDto);
         return accountService.createAccount(accountDto)
                 .map(account -> ResponseEntity.ok(account));
     }
