@@ -16,4 +16,14 @@ public class Helper {
                 .build();
 
     }
+
+    public static AccountMicroServiceResponse buildFailureResponse(Object data) {
+        return AccountMicroServiceResponse.builder()
+                .statusCode(ResponseCode.INVALID_CREDENTIALS.getCanonicalCode())
+                .statusMessage(ResponseCode.INVALID_CREDENTIALS.getDescription())
+                .timestamp(LocalDateTime.now().toString())
+                .data(data)
+                .build();
+
+    }
 }

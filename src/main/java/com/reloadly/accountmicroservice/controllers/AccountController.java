@@ -25,7 +25,6 @@ public class AccountController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountMicroServiceResponse>> createAccount(@Valid @RequestBody AccountDto accountDto) {
-        log.info("Request {}", accountDto);
         return accountService.createAccount(accountDto)
                 .map(account -> ResponseEntity.ok(account));
     }

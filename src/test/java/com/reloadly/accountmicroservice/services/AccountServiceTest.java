@@ -1,6 +1,7 @@
 package com.reloadly.accountmicroservice.services;
 
 import com.reloadly.accountmicroservice.auth.PBKDF2Encoder;
+import com.reloadly.accountmicroservice.auth.User;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.helpers.TestHelper;
 import com.reloadly.accountmicroservice.repositories.AccountRepository;
@@ -40,12 +41,9 @@ public class AccountServiceTest {
 
     @Test
     public void createAccountSuccess() {
-
         doReturn(null).when(accountRepository).findByEmail(any());
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).saveAndFlush(any());
-
         Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(OK.getCanonicalCode()))
@@ -56,9 +54,7 @@ public class AccountServiceTest {
     public void updateAccountSuccess() {
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findById(anyLong());
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).saveAndFlush(any());
-
         Mono<AccountMicroServiceResponse> account = accountService.updateAccount(1l, TestHelper.getAccountDto());
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(OK.getCanonicalCode()))
@@ -67,10 +63,8 @@ public class AccountServiceTest {
 
     @Test
     public void createAccountFailure() {
-
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findByEmail(any());
         Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(ALREADY_EXIST.getCanonicalCode()))
@@ -79,10 +73,8 @@ public class AccountServiceTest {
 
     @Test
     public void updateAccountFailure() {
-
         doReturn(null).when(accountRepository).findById(anyLong());
         Mono<AccountMicroServiceResponse> account = accountService.updateAccount(1l, TestHelper.getAccountDto());
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(NOT_FOUND.getCanonicalCode()))
@@ -91,12 +83,9 @@ public class AccountServiceTest {
 
     @Test
     public void createAccountException() {
-
         doReturn(null).when(accountRepository).findByEmail(any());
         doReturn(new RuntimeException()).when(accountRepository).saveAndFlush(any());
-
         Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(INTERNAL_SERVER_ERROR.getCanonicalCode()))
@@ -107,9 +96,7 @@ public class AccountServiceTest {
     public void updateAccountException() {
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findById(anyLong());
         doReturn(new RuntimeException()).when(accountRepository).saveAndFlush(any());
-
         Mono<AccountMicroServiceResponse> account = accountService.updateAccount(1l, TestHelper.getAccountDto());
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(INTERNAL_SERVER_ERROR.getCanonicalCode()))
@@ -120,9 +107,7 @@ public class AccountServiceTest {
     @Test
     public void findAccountByEmailSuccess() {
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findByEmail(any());
-
         Mono<AccountMicroServiceResponse> account = accountService.findAccountByEmail(TestHelper.TEST_EMAIL);
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(OK.getCanonicalCode()))
@@ -132,12 +117,29 @@ public class AccountServiceTest {
     @Test
     public void findAccountByEmailFailure() {
         doReturn(null).when(accountRepository).findByEmail(any());
-
         Mono<AccountMicroServiceResponse> account = accountService.findAccountByEmail(TestHelper.TEST_EMAIL);
-
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(NOT_FOUND.getCanonicalCode()))
+                .verifyComplete();
+    }
+
+    @Test
+    public void findByUsernameSuccess() {
+        doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findByEmail(any());
+        Mono<User> account = accountService.findByUsername(TestHelper.TEST_EMAIL);
+        StepVerifier
+                .create(account)
+                .expectNextMatches(response -> response != null)
+                .verifyComplete();
+    }
+
+    @Test
+    public void findByUsernameFailure() {
+        doReturn(null).when(accountRepository).findByEmail(any());
+        Mono<User> account = accountService.findByUsername(TestHelper.TEST_EMAIL);
+        StepVerifier
+                .create(account)
                 .verifyComplete();
     }
 

@@ -9,6 +9,7 @@ import java.util.Optional;
 public enum ResponseCode {
 
     OK("0", "0000", "Success", HttpStatus.OK),
+    INVALID_CREDENTIALS("1", "1000", "Username or Password Incorrect", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_ACTIVE("126", "1200","Account not active", HttpStatus.BAD_REQUEST),
     ALREADY_EXIST("137", "4001","Account already exist", HttpStatus.FORBIDDEN),
     NOT_FOUND("139", "3004","Account not found", HttpStatus.NOT_FOUND),

@@ -4,6 +4,7 @@ import com.reloadly.accountmicroservice.auth.PBKDF2Encoder;
 import com.reloadly.accountmicroservice.auth.User;
 import com.reloadly.accountmicroservice.dto.request.AccountDto;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
+import com.reloadly.accountmicroservice.enums.Role;
 import com.reloadly.accountmicroservice.models.Account;
 import com.reloadly.accountmicroservice.repositories.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,7 @@ public class AccountService {
                 .otherName(accountDto.getOtherName())
                 .password(passwordEncoder.encode(accountDto.getPassword()))
                 .phoneNumber(accountDto.getPhoneNumber())
+                .role(Role.ROLE_USER)
                 .build();
 
         try {
@@ -105,6 +107,11 @@ public class AccountService {
         return Mono.just(new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(), account));
     }
 
+    /**
+     * Find an account by email and return the User Details Object
+     * @param username of the user
+     * @return {@link Mono<User>}
+     */
     public Mono<User> findByUsername(String username) {
         Account account = accountRepository.findByEmail(username);
 
