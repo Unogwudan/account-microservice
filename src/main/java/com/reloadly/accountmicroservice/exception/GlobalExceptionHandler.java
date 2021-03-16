@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         } else if (ex instanceof AccountMicroServiceException) {
             var accountMicroServiceException = (AccountMicroServiceException) ex;
 
-            return handleMobileAdException(
+            return handleAccountMicroServiceException(
                     accountMicroServiceException,
                     accountMicroServiceException.getHttpStatus(),
                     headers,
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    private ResponseEntity<AccountMicroServiceException> handleMobileAdException(
+    private ResponseEntity<AccountMicroServiceException> handleAccountMicroServiceException(
             AccountMicroServiceException ex,
             HttpStatus httpStatus,
             HttpHeaders headers,
