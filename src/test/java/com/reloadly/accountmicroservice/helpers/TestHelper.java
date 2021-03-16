@@ -13,6 +13,8 @@ import static com.reloadly.accountmicroservice.enums.ResponseCode.OK;
 
 public class TestHelper {
 
+    public static String TEST_EMAIL = "unogwudan@gmail.com";
+
     public static Account getCreatedAccount() {
         Faker faker = Faker.instance();
         Account account = Account.builder()
@@ -22,7 +24,6 @@ public class TestHelper {
                 .otherName(faker.name().nameWithMiddle())
                 .password("pass")
                 .phoneNumber(faker.phoneNumber().phoneNumber())
-                .active(Boolean.TRUE)
                 .build();
         account.setId(1l);
 
@@ -38,7 +39,6 @@ public class TestHelper {
                 .otherName(faker.name().nameWithMiddle())
                 .password("pass")
                 .phoneNumber(faker.phoneNumber().phoneNumber())
-                .active(Boolean.TRUE)
                 .build();
 
         return account;

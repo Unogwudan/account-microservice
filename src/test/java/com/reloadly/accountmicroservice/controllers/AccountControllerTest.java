@@ -69,4 +69,17 @@ public class AccountControllerTest {
                 .expectBody(AccountMicroServiceResponse.class)
                 .value(response -> Assert.assertEquals(response.getStatusCode(), OK.getCanonicalCode()));
     }
+
+    @Test
+    public void getAccount() {
+        doReturn(TestHelper.getSuccessfulResponse()).when(accountService).findAccountByEmail(any());
+        webTestClient.get()
+                .uri(CommonConstants.API_VERSION + "accounts/unogwudan@gmail.com")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(AccountMicroServiceResponse.class)
+                .value(response -> Assert.assertEquals(response.getStatusCode(), OK.getCanonicalCode()));
+    }
 }

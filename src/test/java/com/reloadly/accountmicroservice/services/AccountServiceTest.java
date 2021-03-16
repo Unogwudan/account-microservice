@@ -1,5 +1,6 @@
 package com.reloadly.accountmicroservice.services;
 
+import com.reloadly.accountmicroservice.auth.PBKDF2Encoder;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.helpers.TestHelper;
 import com.reloadly.accountmicroservice.repositories.AccountRepository;
@@ -20,10 +21,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 
-//import org.junit.jupiter.api.Test;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AccountService.class})
+@ContextConfiguration(classes = {AccountService.class, PBKDF2Encoder.class})
 @EnableConfigurationProperties
 @TestPropertySource("classpath:/test.properties")
 @Slf4j
@@ -34,6 +34,9 @@ public class AccountServiceTest {
 
     @MockBean
     private AccountRepository accountRepository;
+
+    @MockBean
+    private PBKDF2Encoder pbkdf2Encoder;
 
     @Test
     public void createAccountSuccess() {
@@ -85,4 +88,57 @@ public class AccountServiceTest {
                 .expectNextMatches(response -> response.getStatusCode().equals(NOT_FOUND.getCanonicalCode()))
                 .verifyComplete();
     }
+
+    @Test
+    public void createAccountException() {
+
+        doReturn(null).when(accountRepository).findByEmail(any());
+        doReturn(new RuntimeException()).when(accountRepository).saveAndFlush(any());
+
+        Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
+
+        StepVerifier
+                .create(account)
+                .expectNextMatches(response -> response.getStatusCode().equals(INTERNAL_SERVER_ERROR.getCanonicalCode()))
+                .verifyComplete();
+    }
+
+    @Test
+    public void updateAccountException() {
+        doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findById(anyLong());
+        doReturn(new RuntimeException()).when(accountRepository).saveAndFlush(any());
+
+        Mono<AccountMicroServiceResponse> account = accountService.updateAccount(1l, TestHelper.getAccountDto());
+
+        StepVerifier
+                .create(account)
+                .expectNextMatches(response -> response.getStatusCode().equals(INTERNAL_SERVER_ERROR.getCanonicalCode()))
+                .verifyComplete();
+    }
+
+
+    @Test
+    public void findAccountByEmailSuccess() {
+        doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findByEmail(any());
+
+        Mono<AccountMicroServiceResponse> account = accountService.findAccountByEmail(TestHelper.TEST_EMAIL);
+
+        StepVerifier
+                .create(account)
+                .expectNextMatches(response -> response.getStatusCode().equals(OK.getCanonicalCode()))
+                .verifyComplete();
+    }
+
+    @Test
+    public void findAccountByEmailFailure() {
+        doReturn(null).when(accountRepository).findByEmail(any());
+
+        Mono<AccountMicroServiceResponse> account = accountService.findAccountByEmail(TestHelper.TEST_EMAIL);
+
+        StepVerifier
+                .create(account)
+                .expectNextMatches(response -> response.getStatusCode().equals(NOT_FOUND.getCanonicalCode()))
+                .verifyComplete();
+    }
+
 }

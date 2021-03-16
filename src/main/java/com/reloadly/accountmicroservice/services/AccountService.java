@@ -1,5 +1,7 @@
 package com.reloadly.accountmicroservice.services;
 
+import com.reloadly.accountmicroservice.auth.PBKDF2Encoder;
+import com.reloadly.accountmicroservice.auth.User;
 import com.reloadly.accountmicroservice.dto.request.AccountDto;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.models.Account;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.reloadly.accountmicroservice.enums.ResponseCode.*;
@@ -17,9 +20,11 @@ import static com.reloadly.accountmicroservice.enums.ResponseCode.*;
 @Service
 public class AccountService {
 
+    private final PBKDF2Encoder passwordEncoder;
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(PBKDF2Encoder passwordEncoder, AccountRepository accountRepository) {
+        this.passwordEncoder = passwordEncoder;
         this.accountRepository = accountRepository;
     }
 
@@ -42,9 +47,8 @@ public class AccountService {
                 .firstName(accountDto.getFirstName())
                 .surname(accountDto.getSurname())
                 .otherName(accountDto.getOtherName())
-                .password(accountDto.getPassword())
+                .password(passwordEncoder.encode(accountDto.getPassword()))
                 .phoneNumber(accountDto.getPhoneNumber())
-                .active(Boolean.TRUE)
                 .build();
 
         try {
@@ -78,7 +82,7 @@ public class AccountService {
         account.setPhoneNumber(accountDto.getPhoneNumber());
 
         try {
-            response = new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(),  accountRepository.save(account));
+            response = new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(),  accountRepository.saveAndFlush(account));
             log.error("Account updated successfully {}", account);
         } catch (Exception e) {
             log.error("Exception occurred while updating account {}", e.getMessage());
@@ -86,4 +90,30 @@ public class AccountService {
         }
         return Mono.just(response);
     }
+
+    /**
+     * Find an account by the email address supplied
+     * @param email to search for
+     * @return {@link Mono<AccountMicroServiceResponse>}
+     */
+    public Mono<AccountMicroServiceResponse> findAccountByEmail(String email) {
+        Account account = accountRepository.findByEmail(email);
+        if (Objects.isNull(account)) {
+            return Mono.just(new AccountMicroServiceResponse(NOT_FOUND.getCanonicalCode(), NOT_FOUND.getDescription(), LocalDateTime.now().toString(), account));
+        }
+
+        return Mono.just(new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(), account));
+    }
+
+    public Mono<User> findByUsername(String username) {
+        Account account = accountRepository.findByEmail(username);
+
+        if (!Objects.isNull(account)) {
+            User user = new User(account.getEmail(), account.getPassword(), Arrays.asList(account.getRole()));
+            return Mono.just(user);
+        } else {
+            return Mono.empty();
+        }
+    }
+
 }

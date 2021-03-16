@@ -36,4 +36,10 @@ public class AccountController {
                 .map(account -> ResponseEntity.ok(account));
     }
 
+    @GetMapping("/{email}")
+    public Mono<ResponseEntity<AccountMicroServiceResponse>> getAccount(@PathVariable String email) {
+        return accountService.findAccountByEmail(email)
+                .map(account -> ResponseEntity.ok(account));
+    }
+
 }

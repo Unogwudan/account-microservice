@@ -2,14 +2,13 @@ package com.reloadly.accountmicroservice.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.reloadly.accountmicroservice.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -45,24 +44,11 @@ public class Account extends BaseModel<Account> {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(nullable = false)
-    private Boolean active;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Override
     public void setId(Long id) {
         super.setId(id);
     }
-
-    //    @Column(nullable = false)
-//    private Boolean deleted = Boolean.FALSE;
-
-//    @ApiModelProperty(hidden = true)
-//    @Transient
-//    private List<Permission> permissions;
-
-//    @ManyToOne
-//    @JoinColumn(name = "role")
-//    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
-//    private Role userRole;
-
 }

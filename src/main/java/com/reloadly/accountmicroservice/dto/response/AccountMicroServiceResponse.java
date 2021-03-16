@@ -1,7 +1,6 @@
 package com.reloadly.accountmicroservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.reloadly.accountmicroservice.models.Account;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +15,5 @@ public class AccountMicroServiceResponse {
     private String statusCode;
     private String statusMessage;
     private String timestamp;
-    private Account data;
+    private Object data;
 }
