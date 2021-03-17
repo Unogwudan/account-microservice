@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    private Long id;
+
     private String username;
 
     private String password;
@@ -38,13 +40,14 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public User(String username, String password, List<Role> roles, String firstName, String surname, String phone) {
+    public User(Long id, String username, String password, List<Role> roles, String firstName, String surname, String phone) {
         this.username = username;
         this.password = password;
         this.roles = roles;
         this.firstName = firstName;
         this.surname = surname;
         this.phoneNumber = phone;
+        this.id = id;
     }
 
     @Override

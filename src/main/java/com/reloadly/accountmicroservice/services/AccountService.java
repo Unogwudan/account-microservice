@@ -116,7 +116,7 @@ public class AccountService {
         Account account = accountRepository.findByEmail(username);
 
         if (!Objects.isNull(account)) {
-            User user = new User(account.getEmail(), account.getPassword(), Arrays.asList(account.getRole()), account.getFirstName(),
+            User user = new User(account.getId(), account.getEmail(), account.getPassword(), Arrays.asList(account.getRole()), account.getFirstName(),
                     account.getSurname(), account.getPhoneNumber());
             return Mono.just(user);
         } else {
