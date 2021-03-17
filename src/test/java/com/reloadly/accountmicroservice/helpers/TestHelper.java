@@ -2,7 +2,7 @@ package com.reloadly.accountmicroservice.helpers;
 
 import com.github.javafaker.Faker;
 import com.reloadly.accountmicroservice.auth.User;
-import com.reloadly.accountmicroservice.dto.request.AccountDto;
+import com.reloadly.accountmicroservice.dto.request.AccountRequest;
 import com.reloadly.accountmicroservice.dto.request.AuthRequest;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.enums.Role;
@@ -48,9 +48,9 @@ public class TestHelper {
         return account;
     }
 
-    public static AccountDto getAccountDto() {
+    public static AccountRequest getAccountDto() {
         Faker faker = Faker.instance();
-        AccountDto account = AccountDto.builder()
+        AccountRequest account = AccountRequest.builder()
                 .email(faker.name().username().concat("@example.name"))
                 .firstName(faker.name().firstName())
                 .surname(faker.name().lastName())

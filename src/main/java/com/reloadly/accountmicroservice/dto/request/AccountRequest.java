@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountDto {
+public class AccountRequest {
 
     @NotNull(message = "First Name Cannot be null")
     private String firstName;

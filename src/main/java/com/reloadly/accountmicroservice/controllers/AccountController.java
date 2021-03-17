@@ -1,7 +1,7 @@
 package com.reloadly.accountmicroservice.controllers;
 
 import com.reloadly.accountmicroservice.constants.CommonConstants;
-import com.reloadly.accountmicroservice.dto.request.AccountDto;
+import com.reloadly.accountmicroservice.dto.request.AccountRequest;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.services.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +24,14 @@ public class AccountController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<AccountMicroServiceResponse>> createAccount(@Valid @RequestBody AccountDto accountDto) {
-        return accountService.createAccount(accountDto)
+    public Mono<ResponseEntity<AccountMicroServiceResponse>> createAccount(@Valid @RequestBody AccountRequest accountRequest) {
+        return accountService.createAccount(accountRequest)
                 .map(account -> ResponseEntity.ok(account));
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<AccountMicroServiceResponse>> updateAccount(@Valid @RequestBody AccountDto accountDto, @PathVariable long id) {
-        return accountService.updateAccount(id, accountDto)
+    public Mono<ResponseEntity<AccountMicroServiceResponse>> updateAccount(@Valid @RequestBody AccountRequest accountRequest, @PathVariable long id) {
+        return accountService.updateAccount(id, accountRequest)
                 .map(account -> ResponseEntity.ok(account));
     }
 

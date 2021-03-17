@@ -2,7 +2,7 @@ package com.reloadly.accountmicroservice.services;
 
 import com.reloadly.accountmicroservice.auth.PBKDF2Encoder;
 import com.reloadly.accountmicroservice.auth.User;
-import com.reloadly.accountmicroservice.dto.request.AccountDto;
+import com.reloadly.accountmicroservice.dto.request.AccountRequest;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.enums.Role;
 import com.reloadly.accountmicroservice.models.Account;
@@ -31,25 +31,25 @@ public class AccountService {
 
     /**
      * Create an account
-     * @param accountDto the dto containing the account info
+     * @param accountRequest the dto containing the account info
      * @return {@link Mono<AccountMicroServiceResponse>}
      */
-    public Mono<AccountMicroServiceResponse> createAccount(AccountDto accountDto) {
+    public Mono<AccountMicroServiceResponse> createAccount(AccountRequest accountRequest) {
 
         AccountMicroServiceResponse response;
-        Account account = accountRepository.findByEmail(accountDto.getEmail());
+        Account account = accountRepository.findByEmail(accountRequest.getEmail());
 
         if (!Objects.isNull(account)) {
             return Mono.just(new AccountMicroServiceResponse(ALREADY_EXIST.getCanonicalCode(), ALREADY_EXIST.getDescription(), LocalDateTime.now().toString(), account));
         }
 
         Account savedAccount = Account.builder()
-                .email(accountDto.getEmail())
-                .firstName(accountDto.getFirstName())
-                .surname(accountDto.getSurname())
-                .otherName(accountDto.getOtherName())
-                .password(passwordEncoder.encode(accountDto.getPassword()))
-                .phoneNumber(accountDto.getPhoneNumber())
+                .email(accountRequest.getEmail())
+                .firstName(accountRequest.getFirstName())
+                .surname(accountRequest.getSurname())
+                .otherName(accountRequest.getOtherName())
+                .password(passwordEncoder.encode(accountRequest.getPassword()))
+                .phoneNumber(accountRequest.getPhoneNumber())
                 .role(Role.ROLE_USER)
                 .build();
 
@@ -64,10 +64,10 @@ public class AccountService {
 
     /**
      * Update an account
-     * @param accountDto the dto containing the details to update
+     * @param accountRequest the dto containing the details to update
      * @return {@link Mono<AccountMicroServiceResponse>}
      */
-    public Mono<AccountMicroServiceResponse> updateAccount(long id, AccountDto accountDto) {
+    public Mono<AccountMicroServiceResponse> updateAccount(long id, AccountRequest accountRequest) {
 
         AccountMicroServiceResponse response;
         Account account = accountRepository.findById(id);
@@ -76,12 +76,12 @@ public class AccountService {
             return Mono.just(new AccountMicroServiceResponse(NOT_FOUND.getCanonicalCode(), NOT_FOUND.getDescription(), LocalDateTime.now().toString(), account));
         }
 
-        account.setEmail(accountDto.getEmail());
-        account.setFirstName(accountDto.getFirstName());
-        account.setSurname(accountDto.getSurname());
-        account.setOtherName(accountDto.getOtherName());
-        account.setPassword(accountDto.getPassword());
-        account.setPhoneNumber(accountDto.getPhoneNumber());
+        account.setEmail(accountRequest.getEmail());
+        account.setFirstName(accountRequest.getFirstName());
+        account.setSurname(accountRequest.getSurname());
+        account.setOtherName(accountRequest.getOtherName());
+        account.setPassword(accountRequest.getPassword());
+        account.setPhoneNumber(accountRequest.getPhoneNumber());
 
         try {
             response = new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(),  accountRepository.saveAndFlush(account));
