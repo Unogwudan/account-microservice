@@ -12,7 +12,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Account Management AP").version("1.0.0"))
+                .info(new Info().title("Account Management API").version("1.0.0"))
                 // Components section defines Security Scheme "Authorization"
 //                .components(new Components()
 //                        .addSecuritySchemes("Authorization", new SecurityScheme()
