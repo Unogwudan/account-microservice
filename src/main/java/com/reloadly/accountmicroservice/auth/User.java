@@ -13,30 +13,38 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@Getter
+@Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
 
     private String username;
+
     private String password;
 
-    @Getter
-    @Setter
+    private String firstName;
+
+    private String surname;
+
+    private String phoneNumber;
+
     private Boolean enabled;
 
-    @Getter
-    @Setter
     private List<Role> roles;
 
     public User(String username) {
         this.username = username;
     }
 
-    public User(String username, String password, List<Role> roles) {
+    public User(String username, String password, List<Role> roles, String firstName, String surname, String phone) {
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.phoneNumber = phone;
     }
 
     @Override

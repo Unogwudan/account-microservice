@@ -88,6 +88,6 @@ public class TestHelper {
     }
 
     public static Mono<User> getUser() {
-        return Mono.just(new User("unogwudan@example.com", "password", Arrays.asList(Role.ROLE_USER)));
+        return Mono.just(new User("unogwudan@example.com", "password", Arrays.asList(Role.ROLE_USER), "dan", "dan", "08037731178"));
     }
 }
