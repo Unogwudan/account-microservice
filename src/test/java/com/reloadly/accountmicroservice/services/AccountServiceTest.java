@@ -24,7 +24,7 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AccountService.class, PBKDF2Encoder.class})
+@ContextConfiguration(classes = {AccountService.class, PBKDF2Encoder.class, WebClientHttpService.class})
 @EnableConfigurationProperties
 @TestPropertySource("classpath:/test.properties")
 @Slf4j
@@ -39,10 +39,14 @@ public class AccountServiceTest {
     @MockBean
     private PBKDF2Encoder pbkdf2Encoder;
 
+    @MockBean
+    private WebClientHttpService httpService;
+
     @Test
     public void createAccountSuccess() {
         doReturn(null).when(accountRepository).findByEmail(any());
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).saveAndFlush(any());
+        doReturn(TestHelper.getSuccessfulResponse()).when(httpService).post(any(), any(), any());
         Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
         StepVerifier
                 .create(account)
@@ -65,6 +69,7 @@ public class AccountServiceTest {
     public void createAccountFailure() {
         doReturn(TestHelper.getCreatedAccount()).when(accountRepository).findByEmail(any());
         Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
+        doReturn(TestHelper.getSuccessfulResponse()).when(httpService).post(any(), any(), any());
         StepVerifier
                 .create(account)
                 .expectNextMatches(response -> response.getStatusCode().equals(ALREADY_EXIST.getCanonicalCode()))
@@ -85,6 +90,7 @@ public class AccountServiceTest {
     public void createAccountException() {
         doReturn(null).when(accountRepository).findByEmail(any());
         doReturn(new RuntimeException()).when(accountRepository).saveAndFlush(any());
+        doReturn(TestHelper.getSuccessfulResponse()).when(httpService).post(any(), any(), any());
         Mono<AccountMicroServiceResponse> account = accountService.createAccount(TestHelper.getAccountDto());
         StepVerifier
                 .create(account)

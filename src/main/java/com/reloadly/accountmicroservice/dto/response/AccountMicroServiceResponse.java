@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,4 +18,10 @@ public class AccountMicroServiceResponse {
     private String statusMessage;
     private String timestamp;
     private Object data;
+
+    public AccountMicroServiceResponse(String statusCode, String statusMessage) {
+        this.statusCode = statusCode;
+        this.statusMessage = statusMessage;
+        this.timestamp = LocalDateTime.now().toString();
+    }
 }

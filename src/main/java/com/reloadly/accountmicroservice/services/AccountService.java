@@ -38,6 +38,7 @@ public class AccountService {
 
     /**
      * Create an account
+     *
      * @param accountRequest the dto containing the account info
      * @return {@link Mono<AccountMicroServiceResponse>}
      */
@@ -67,14 +68,14 @@ public class AccountService {
             return Mono.just(new AccountMicroServiceResponse(INTERNAL_SERVER_ERROR.getCanonicalCode(), INTERNAL_SERVER_ERROR.getDescription(), LocalDateTime.now().toString(), null));
         }
 
-        httpService.post(notificationEndpoint, Helper.buildEmailRequest(accountRequest), AccountMicroServiceResponse.class)
-                .subscribeOn(Schedulers.elastic()).subscribe(res -> log.info("Email Notification Response {}", res));
+        httpService.post(notificationEndpoint, Helper.buildEmailRequest(accountRequest), AccountMicroServiceResponse.class).subscribeOn(Schedulers.elastic()).subscribe(res -> log.info("Email Notification Response {}", res));
 
         return Mono.just(response);
     }
 
     /**
      * Update an account
+     *
      * @param accountRequest the dto containing the details to update
      * @return {@link Mono<AccountMicroServiceResponse>}
      */
@@ -95,7 +96,7 @@ public class AccountService {
         account.setPhoneNumber(accountRequest.getPhoneNumber());
 
         try {
-            response = new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(),  accountRepository.saveAndFlush(account));
+            response = new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(), accountRepository.saveAndFlush(account));
             log.error("Account updated successfully {}", account);
         } catch (Exception e) {
             log.error("Exception occurred while updating account {}", e.getMessage());
@@ -106,6 +107,7 @@ public class AccountService {
 
     /**
      * Find an account by the email address supplied
+     *
      * @param email to search for
      * @return {@link Mono<AccountMicroServiceResponse>}
      */
@@ -120,6 +122,7 @@ public class AccountService {
 
     /**
      * Find an account by email and return the User Details Object
+     *
      * @param username of the user
      * @return {@link Mono<User>}
      */
