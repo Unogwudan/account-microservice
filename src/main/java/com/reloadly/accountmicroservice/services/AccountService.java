@@ -5,11 +5,14 @@ import com.reloadly.accountmicroservice.auth.User;
 import com.reloadly.accountmicroservice.dto.request.AccountRequest;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.enums.Role;
+import com.reloadly.accountmicroservice.helpers.Helper;
 import com.reloadly.accountmicroservice.models.Account;
 import com.reloadly.accountmicroservice.repositories.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -21,12 +24,16 @@ import static com.reloadly.accountmicroservice.enums.ResponseCode.*;
 @Service
 public class AccountService {
 
+    @Value("${notification.service.endpoint}")
+    private String notificationEndpoint;
     private final PBKDF2Encoder passwordEncoder;
     private final AccountRepository accountRepository;
+    private final WebClientHttpService httpService;
 
-    public AccountService(PBKDF2Encoder passwordEncoder, AccountRepository accountRepository) {
+    public AccountService(PBKDF2Encoder passwordEncoder, AccountRepository accountRepository, WebClientHttpService httpService) {
         this.passwordEncoder = passwordEncoder;
         this.accountRepository = accountRepository;
+        this.httpService = httpService;
     }
 
     /**
@@ -57,8 +64,12 @@ public class AccountService {
             response = new AccountMicroServiceResponse(OK.getCanonicalCode(), OK.getDescription(), LocalDateTime.now().toString(), accountRepository.saveAndFlush(savedAccount));
         } catch (Exception e) {
             log.error("Exception occurred while creating account {}", e.getMessage());
-            response = new AccountMicroServiceResponse(INTERNAL_SERVER_ERROR.getCanonicalCode(), INTERNAL_SERVER_ERROR.getDescription(), LocalDateTime.now().toString(), account);
+            return Mono.just(new AccountMicroServiceResponse(INTERNAL_SERVER_ERROR.getCanonicalCode(), INTERNAL_SERVER_ERROR.getDescription(), LocalDateTime.now().toString(), null));
         }
+
+        httpService.post(notificationEndpoint, Helper.buildEmailRequest(accountRequest), AccountMicroServiceResponse.class)
+                .subscribeOn(Schedulers.elastic()).subscribe(res -> log.info("Email Notification Response {}", res));
+
         return Mono.just(response);
     }
 

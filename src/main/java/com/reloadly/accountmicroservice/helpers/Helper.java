@@ -1,5 +1,8 @@
 package com.reloadly.accountmicroservice.helpers;
 
+import com.reloadly.accountmicroservice.constants.CommonConstants;
+import com.reloadly.accountmicroservice.dto.request.AccountRequest;
+import com.reloadly.accountmicroservice.dto.request.EmailRequest;
 import com.reloadly.accountmicroservice.dto.response.AccountMicroServiceResponse;
 import com.reloadly.accountmicroservice.enums.ResponseCode;
 
@@ -25,5 +28,17 @@ public class Helper {
                 .data(data)
                 .build();
 
+    }
+
+    public static EmailRequest buildEmailRequest(AccountRequest request) {
+        String message = CommonConstants.ACCOUNT_CREATION_MESSAGE
+                .replace("{username}", request.getEmail())
+                .replace("{password}", request.getPassword());
+
+        return EmailRequest.builder()
+                .to(request.getEmail())
+                .subject(CommonConstants.ACCOUNT_CREATION_SUBJECT)
+                .message(message)
+                .build();
     }
 }
